@@ -5,5 +5,6 @@
   <NuxtLoadingIndicator color="var(--color-brand)" :height="2" />
   <NuxtLayout>
     <NuxtPage />
+    <UiSonner />
   </NuxtLayout>
 </template>
