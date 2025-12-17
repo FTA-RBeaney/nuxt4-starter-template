@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 
-definePageMeta({
-  layout: "admin",
-});
-
 interface Event {
   title: string;
   day: "Friday" | "Saturday" | "Sunday" | "Monday";
@@ -13,6 +9,8 @@ interface Event {
   type?: "lesson" | "party" | "other";
   location?: string;
 }
+
+const isLoading = ref(true);
 
 // Helper to convert HH:MM to minutes from midnight
 const timeToMinutes = (time: string): number => {
@@ -25,7 +23,7 @@ const timeToMinutes = (time: string): number => {
 // Start time for our calendar display (9 AM in minutes from midnight)
 const CALENDAR_START_TIME_MINUTES = timeToMinutes("09:00");
 // Height of a 15-minute slot in pixels
-const PIXELS_PER_15_MINUTES = 16; // Based on h-16 = 64px for one hour (4 * 15min)
+const PIXELS_PER_15_MINUTES = 14; // Based on h-16 = 64px for one hour (4 * 15min)
 const PIXELS_PER_MINUTE = PIXELS_PER_15_MINUTES / 15;
 
 const events = ref<Event[]>([
@@ -284,78 +282,89 @@ const addEvent = (event: Event) => {
 </script>
 
 <template>
-  <UiContainer class="py-8">
-    <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold">Schedule</h1>
-      <TimetableAddModal @save="addEvent" />
+  <Loader v-if="isLoading" />
+  <div v-else>
+    <div class="flex justify-end px-6 py-4">
+      <UiButton size="sm"><Icon name="lucide:plus" /> New event</UiButton>
     </div>
-
-    <!-- Modified grid layout for 5 columns (1 for time, 4 for days) -->
-    <div
-      class="relative mt-8 grid h-[calc(100vh-200px)] grid-cols-1 gap-8 overflow-y-auto md:grid-cols-3 lg:grid-cols-5"
-    >
-      <!-- Time Axis Column -->
-      <div
-        class="bg-background sticky top-0 z-10 hidden border-r border-gray-200 lg:block dark:border-gray-700"
-      >
-        <div class="h-16"></div>
-        <!-- Placeholder for day header alignment -->
-        <div class="relative">
-          <div
-            v-for="(time, index) in timeRange"
-            :key="index"
-            class="flex h-16 items-start justify-end pr-2 text-sm text-gray-500 dark:text-gray-400"
-            :style="{ paddingTop: index === 0 ? '0' : '8px' }"
-          >
-            {{ time }}
+    <div class="w-full !max-w-full">
+      <UiCard>
+        <UiCardContent>
+          <Calendar />
+          <div class="flex items-center justify-between">
+            <h1 class="text-2xl font-bold">Schedule</h1>
+            <TimetableAddModal @save="addEvent" />
           </div>
-        </div>
-      </div>
 
-      <!-- Day Columns -->
-      <div
-        v-for="(dayEvents, day) in calculatedEvents"
-        :key="day"
-        class="relative rounded-lg border p-4"
-      >
-        <h2 class="mb-4 text-center text-xl font-bold">{{ day }}</h2>
-        <!-- Time slot lines for visual reference -->
-        <div class="absolute inset-0 z-0">
+          <!-- Modified grid layout for 5 columns (1 for time, 4 for days) -->
           <div
-            v-for="(time, index) in timeRange"
-            :key="index"
-            class="h-16 border-t border-gray-100 dark:border-gray-800"
-            :class="{ 'border-b-0': index === timeRange.length - 1 }"
-          ></div>
-        </div>
-        <div class="relative h-full">
-          <div
-            v-for="(event, index) in dayEvents"
-            :key="index"
-            :class="[
-              event.colorClass || 'bg-primary text-primary-foreground',
-              'absolute z-10 overflow-hidden rounded-lg p-2 text-xs shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg',
-            ]"
-            :style="{
-              top: event.top,
-              height: event.height,
-              left: '2px',
-              right: '2px',
-            }"
+            class="relative mt-8 grid grid-cols-1 gap-8 overflow-y-auto md:grid-cols-3 lg:grid-cols-5"
           >
-            <h3 class="font-bold whitespace-normal">{{ event.title }}</h3>
-            <p class="whitespace-normal">
-              {{ event.startTime }} - {{ event.endTime }}
-            </p>
+            <!-- Time Axis Column -->
+            <div
+              class="bg-background sticky top-0 z-10 hidden border-r border-gray-200 lg:block dark:border-gray-700"
+            >
+              <div class="h-16"></div>
+              <!-- Placeholder for day header alignment -->
+              <div class="relative">
+                <div
+                  v-for="(time, index) in timeRange"
+                  :key="index"
+                  class="flex h-14 items-start justify-end pr-2 text-sm text-gray-500 dark:text-gray-400"
+                  :style="{ paddingTop: index === 0 ? '0' : '8px' }"
+                >
+                  {{ time }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Day Columns -->
+            <div
+              v-for="(dayEvents, day) in calculatedEvents"
+              :key="day"
+              class="relative rounded-lg border p-4"
+            >
+              <h2 class="text-md mb-4 text-center font-bold">{{ day }}</h2>
+              <!-- Time slot lines for visual reference -->
+              <div class="absolute inset-0 z-0">
+                <div
+                  v-for="(time, index) in timeRange"
+                  :key="index"
+                  class="h-16 border-t border-gray-100 dark:border-gray-800"
+                  :class="{ 'border-b-0': index === timeRange.length - 1 }"
+                ></div>
+              </div>
+              <div class="relative h-full">
+                <div
+                  v-for="(event, index) in dayEvents"
+                  :key="index"
+                  :class="[
+                    event.colorClass || 'bg-primary text-primary-foreground',
+                    'absolute z-10 overflow-hidden rounded-lg p-2 text-xs shadow-md transition-shadow duration-200 ease-in-out hover:shadow-lg',
+                  ]"
+                  :style="{
+                    top: event.top,
+                    height: event.height,
+                    left: '2px',
+                    right: '2px',
+                  }"
+                >
+                  <h3 class="font-bold whitespace-normal">{{ event.title }}</h3>
+                  <p class="whitespace-normal">
+                    {{ event.startTime }} - {{ event.endTime }}
+                  </p>
+                </div>
+                <p
+                  v-if="dayEvents.length === 0"
+                  class="text-muted-foreground text-center"
+                >
+                  No events scheduled.
+                </p>
+              </div>
+            </div>
           </div>
-          <p
-            v-if="dayEvents.length === 0"
-            class="text-muted-foreground text-center"
-          >
-            No events scheduled.
-          </p>
-        </div>
-      </div>
+        </UiCardContent>
+      </UiCard>
     </div>
-  </UiContainer>
+  </div>
 </template>

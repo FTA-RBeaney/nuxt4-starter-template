@@ -38,7 +38,7 @@ export const useUserStore = defineStore("user", () => {
   const attendee = useLocalStorage(
     "user-attendee",
     {
-      signedUp: "2025-02-14",
+      signedUp: "01-12-2025",
       passType: "Full pass",
       role: "Lead",
       volunteering: false,
@@ -56,7 +56,7 @@ export const useUserStore = defineStore("user", () => {
     userId.value = null;
     profile.value = null;
     attendee.value = {
-      signedUp: "2025-02-14",
+      signedUp: "01-12-2025",
       passType: "Full pass",
       role: "Lead",
       volunteering: false,

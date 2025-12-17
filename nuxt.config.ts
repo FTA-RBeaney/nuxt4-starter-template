@@ -23,7 +23,26 @@ export default defineNuxtConfig({
     "pinia-plugin-persistedstate/nuxt",
     "vue-sonner/nuxt",
     "nuxt-lucide-icons",
+    "@unlok-co/nuxt-stripe",
   ],
+
+  stripe: {
+    // Server
+    server: {
+      key: process.env.STRIPE_SECRET_KEY,
+      options: {
+        // your api options override for stripe server side
+        // https://github.com/stripe/stripe-node?tab=readme-ov-file#configuration
+      },
+      // CLIENT
+    },
+    client: {
+      key: process.env.STRIPE_PUBLIC_KEY,
+      // manualClientLoad: true, // if you want to have control where you are going to load the client
+      // your api options override for stripe client side https://stripe.com/docs/js/initializing#init_stripe_js-options
+      options: {},
+    },
+  },
 
   css: ["~/assets/css/main.css"],
 
@@ -67,6 +86,11 @@ export default defineNuxtConfig({
       key: process.env.SUPABASE_KEY,
       serviceKey: process.env.SUPABASE_SERVICE_KEY,
     },
+    // Stripe keys: server-side secret in `runtimeConfig.stripe.secretKey`,
+    // and client-side publishable key under `runtimeConfig.public`.
+    stripe: {
+      secretKey: process.env.STRIPE_SECRET_KEY,
+    },
     public: {
       buildAt: new Date().toLocaleString("nb-US", {
         timeZone: "Europe/Helsinki",
@@ -74,6 +98,7 @@ export default defineNuxtConfig({
       environment: "production",
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseKey: process.env.SUPABASE_KEY,
+      stripePublishableKey: process.env.STRIPE_PUBLIC_KEY,
     },
   },
 
@@ -85,6 +110,7 @@ export default defineNuxtConfig({
           "data:",
           "https://res.cloudinary.com",
           "https://misyrpoxvyxwrnhnmeww.supabase.co",
+          "https://randomuser.me",
         ],
       },
     },

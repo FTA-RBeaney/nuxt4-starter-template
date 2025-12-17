@@ -307,7 +307,7 @@ const email = computed(() => (user.value as any)?.email);
 const avatar = computed(() => (user.value as any)?.avatar_url);
 
 const attendee = reactive({
-  signedUp: "2025-02-14",
+  signedUp: "01-12-2025",
   passType: "Full pass",
   role: "Lead",
   volunteering: true,
