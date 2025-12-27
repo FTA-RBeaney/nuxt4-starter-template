@@ -174,7 +174,7 @@
   </UiContainer>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 p {
   margin-bottom: 1rem;
 }
