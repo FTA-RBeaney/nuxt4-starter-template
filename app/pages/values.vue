@@ -2,6 +2,8 @@
 import { values } from "@/constants/values";
 
 import DripTransparent from "@/assets/img/drip-transparent.png";
+import JamJar from "@/assets/img/627a3e29a51c556-removebg-preview.png";
+import JamSplat from "@/assets/img/jam-splat-trans.png";
 </script>
 
 <template>
@@ -34,7 +36,7 @@ import DripTransparent from "@/assets/img/drip-transparent.png";
         </div>
         <UiContainer v-if="index !== values.length - 1" class="!max-w-3xl">
           <img
-            :src="DripTransparent"
+            :src="JamSplat"
             alt="Decorative drip"
             class="mx-auto h-24 w-auto"
           />

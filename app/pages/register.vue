@@ -1,3 +1,6 @@
 <template>
-  <StripeForm />
+  <div>
+    <CountdownPage />
+    <!-- <StripeForm /> -->
+  </div>
 </template>

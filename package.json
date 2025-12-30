@@ -40,6 +40,7 @@
     "canvas-confetti": "^1.9.4",
     "dayjs": "^1.11.19",
     "motion-v": "^1.7.4",
+    "nuxt-countdown": "^1.2.1",
     "nuxt-security": "^2.4.0",
     "pinia-plugin-persistedstate": "4.1.1",
     "reka-ui": "^2.6.0",

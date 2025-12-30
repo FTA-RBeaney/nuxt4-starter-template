@@ -24,6 +24,7 @@ export default defineNuxtConfig({
     "vue-sonner/nuxt",
     "nuxt-lucide-icons",
     "@unlok-co/nuxt-stripe",
+    "nuxt-countdown",
   ],
 
   stripe: {

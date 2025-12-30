@@ -4,11 +4,12 @@ const nav = [
   { name: "About", href: "/about" },
   { name: "Vision", href: "/vision" },
   { name: "Values", href: "/values" },
+  { name: "Register", href: "/register" },
 ];
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#fdf4ee]">
+  <div class="flex min-h-screen flex-col justify-between bg-[#fdf4ee]">
     <Motion
       class="relative top-0 left-0 z-50 mx-auto pt-6"
       :initial="{
