@@ -44,8 +44,8 @@ const jamChosen = (key: string) => {
 
     <h1 class="mt-8 text-6xl font-bold">Welcome</h1>
     <div>
-      <h2 class="text-2xl">What's your jam?</h2>
-      <div class="mt-4 flex flex-col gap-2">
+      <h2 class="text-center text-2xl">What's your jam?</h2>
+      <div class="mt-4 grid grid-cols-2 gap-2">
         <UiButton
           v-for="(scheme, key) in COLOR_SCHEMES"
           :key="key"

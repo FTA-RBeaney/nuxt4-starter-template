@@ -1,17 +1,26 @@
 export const PASS_TYPES = [
-  { label: "Full pass", value: "full", price: 200, icon: "mdi:star" },
+  { label: "Full pass", value: "full", price: 195, icon: "mdi:star" },
   {
     label: "Party pass",
     value: "party",
-    price: 180,
+    price: 90,
     icon: "mdi:party-popper",
   },
 ];
 
 export const HOSTING_OPTIONS = [
-  { label: "I can host", value: "i-can-host" },
-  { label: "I need hosting", value: "need-hosting" },
-  { label: "I cannot come without being hosted", value: "cannot-come-without" },
+  {
+    label: "I do not need hosting",
+    value: "no-hosting",
+    icon: "mdi:home-outline",
+  },
+  { label: "I can host", value: "i-can-host", icon: "mdi:home-heart" },
+  { label: "I need hosting", value: "need-hosting", icon: "mdi:home-off" },
+  {
+    label: "I cannot come without being hosted",
+    value: "cannot-come-without",
+    icon: "mdi:home-remove",
+  },
 ];
 
 export const INSTRUMENT_OPTIONS = [

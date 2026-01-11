@@ -88,7 +88,7 @@ const isColorPickerOpen = ref(false);
       </div>
       <AppFooter />
 
-      <div class="fixed top-10 right-10 z-50">
+      <div class="top-10 right-10 z-50 lg:fixed">
         <!-- Color Picker Button in Top Right -->
         <UiPopover v-model:open="isColorPickerOpen">
           <UiPopoverTrigger as-child>

@@ -16,6 +16,14 @@ export const usePaymentStore = defineStore("payment", () => {
     initOnMounted: true,
   });
 
+  const hostingOption = useLocalStorage(
+    "hosting-option",
+    {},
+    {
+      initOnMounted: true,
+    }
+  );
+
   const registrationData = useLocalStorage(
     "registration-data",
     {},
@@ -47,6 +55,15 @@ export const usePaymentStore = defineStore("payment", () => {
     payItForwardAmount.value = amount;
   };
 
+  const setHosting = (option: object) => {
+    registrationData.value = {
+      ...registrationData.value,
+      hosting: hostingOption,
+    };
+
+    hostingOption.value = option;
+  };
+
   const setRegistrationData = (data: Record<string, any>) => {
     registrationData.value = { ...registrationData.value, ...data };
   };
@@ -60,5 +77,7 @@ export const usePaymentStore = defineStore("payment", () => {
     ticketTypes,
     registrationData,
     setRegistrationData,
+    hostingOption,
+    setHosting,
   };
 });

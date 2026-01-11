@@ -9,8 +9,10 @@ import {
 } from "@/constants/registerOptions";
 
 const paymentStore = usePaymentStore();
-const { setChosenTicket, setRegistrationData, setPayItForward } = paymentStore;
-const { chosenTicket, payItForwardAmount } = storeToRefs(paymentStore);
+const { setChosenTicket, setRegistrationData, setPayItForward, setHosting } =
+  paymentStore;
+const { chosenTicket, payItForwardAmount, hostingOption } =
+  storeToRefs(paymentStore);
 
 import { useStripeCard } from "@/composables/useStripeCard";
 
@@ -29,6 +31,9 @@ const success = ref(false);
 
 // Hosting
 const hosting = ref("no-need");
+
+// Volunteering
+const volunteering = ref(false);
 
 // Musician
 const isMusician = ref(false);
@@ -118,6 +123,7 @@ const completeRegistration = async () => {
         friend_name: friendName.value || null,
         pass: chosenTicket.value || null,
         pay_it_forward: { ...payItForward.value },
+        volunteering: volunteering.value,
         hosting: hosting.value,
         musician: {
           participates: isMusician.value,
@@ -183,6 +189,7 @@ async function onSubmit() {
     pass: chosenTicket.value || null,
     payItForward: { ...payItForward.value },
     hosting: hosting.value,
+    volunteering: volunteering.value,
     musician: {
       participates: isMusician.value,
       instrument: musicianInstrument.value,
@@ -279,7 +286,7 @@ const totalPrice = computed(() => {
 <template>
   <div class="mx-auto w-full max-w-7xl p-6">
     <form class="space-y-4" @submit.prevent="onSubmit">
-      <div class="relative grid grid-cols-2 items-start gap-4">
+      <div class="relative grid items-start gap-4 lg:grid-cols-2">
         <UiCard>
           <UiCardContent class="grid space-y-3">
             <UiRadioGroup orientation="horizontal" class="grid gap-4">
@@ -309,7 +316,7 @@ const totalPrice = computed(() => {
 
             <!-- Pass selection hint -->
             <div>
-              <UiLabel class="font-lazy mb-1 block text-lg font-medium">
+              <UiLabel class="font-lazy mb-1 block text-2xl font-medium">
                 Selected pass
               </UiLabel>
               <div class="text-muted-foreground text-sm">
@@ -323,7 +330,7 @@ const totalPrice = computed(() => {
 
             <!-- Pay it forward -->
             <div>
-              <UiLabel class="font-lazy mb-1 block text-lg font-medium">
+              <UiLabel class="font-lazy mb-1 block text-2xl font-medium">
                 Pay it forward
               </UiLabel>
               <p class="text-muted-foreground mb-2 text-sm">
@@ -367,30 +374,6 @@ const totalPrice = computed(() => {
                     </div>
                   </template>
                 </UiRadioGroup>
-                <!-- <label class="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    v-model="payItForward.type"
-                    value="none"
-                  />
-                  <span>None</span>
-                </label>
-                <label class="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    v-model="payItForward.type"
-                    value="donate"
-                  />
-                  <span>I want to donate</span>
-                </label>
-                <label class="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    v-model="payItForward.type"
-                    value="request"
-                  />
-                  <span>I would like support</span>
-                </label> -->
               </div>
               <div v-if="payItForward.type !== 'none'" class="flex gap-2">
                 <UiInput
@@ -403,41 +386,89 @@ const totalPrice = computed(() => {
 
             <!-- Hosting -->
             <div>
-              <UiLabel class="font-lazy mb-1 block text-lg font-medium">
+              <UiLabel class="font-lazy mb-1 block text-2xl font-medium">
                 Hosting
               </UiLabel>
-              <div class="flex flex-col gap-2">
+              <!-- <div class="flex flex-col gap-2">
                 <label v-for="option in HOSTING_OPTIONS" :key="option.value">
                   <input v-model="hosting" type="radio" :value="option.value" />
                   {{ option.label }}
                 </label>
+              </div> -->
+
+              <div class="mb-2 items-center gap-2">
+                <UiRadioGroup orientation="horizontal" class="grid gap-4">
+                  <template
+                    v-for="(p, i) in HOSTING_OPTIONS"
+                    :key="`hosting-${i}`"
+                  >
+                    <div @click="setHosting(p)">
+                      <UiRadioGroupItem
+                        :id="p.value"
+                        :value="p.value"
+                        class="peer sr-only"
+                      />
+                      <UiLabel
+                        :for="p.value"
+                        class="border-muted bg-popover peer-data-[state=checked]:border-primary hover:bg-accent hover:text-accent-foreground [&:has([data-state=checked])]:border-primary block items-center justify-start gap-3 rounded-md border-2 p-4"
+                        :class="
+                          p.value === hostingOption.value
+                            ? 'border-primary'
+                            : ''
+                        "
+                      >
+                        <div class="flex items-center text-sm">
+                          <Icon class="mr-2 h-6 w-6" :name="p.icon" />
+                          {{ p?.label }}
+                        </div>
+                      </UiLabel>
+                    </div>
+                  </template>
+                </UiRadioGroup>
               </div>
+            </div>
+
+            <!-- Volunteering -->
+            <div>
+              <UiLabel class="font-lazy mb-1 block text-2xl font-medium">
+                Volunteering
+              </UiLabel>
+              <label class="flex items-center gap-2">
+                <input type="checkbox" v-model="volunteering" />
+                <span>I would like to volunteer at the festival</span>
+              </label>
             </div>
 
             <!-- JazzJam musician -->
             <div>
-              <UiLabel class="font-lazy mb-1 block text-lg font-medium">
+              <UiLabel class="font-lazy mb-1 block text-2xl font-medium">
                 JazzJam musician
               </UiLabel>
               <label class="flex items-center gap-2">
                 <input type="checkbox" v-model="isMusician" />
                 <span>I would like to participate as a musician</span>
               </label>
-              <div v-if="isMusician" class="mt-2 grid grid-cols-2 gap-2">
-                <UiInput
-                  v-model="musicianInstrument"
-                  placeholder="Instrument"
-                />
+              <div v-if="isMusician" class="mt-2 grid gap-2">
                 <label class="flex items-center gap-2">
-                  <input type="checkbox" v-model="bringInstrument" />
+                  <input
+                    type="checkbox"
+                    v-model="bringInstrument"
+                    class="block"
+                  />
                   I will bring my own instrument
                 </label>
+                <UiInput
+                  v-if="bringInstrument"
+                  v-model="musicianInstrument"
+                  placeholder="Instrument"
+                  class="block"
+                />
               </div>
             </div>
 
             <!-- Merch placeholder -->
             <div>
-              <UiLabel class="font-lazy mb-1 block text-lg font-medium">
+              <UiLabel class="font-lazy mb-1 block text-2xl font-medium">
                 Merch (T‑shirt)
               </UiLabel>
               <label class="flex items-center gap-2">
@@ -463,8 +494,8 @@ const totalPrice = computed(() => {
             </div>
 
             <!-- Optional questions -->
-            <div class="mt-4">
-              <UiLabel class="font-lazy mb-1 block text-lg font-medium">
+            <div class="mt-4 grid gap-2">
+              <UiLabel class="font-lazy mb-1 block text-2xl font-medium">
                 Optional
               </UiLabel>
               <UiInput
@@ -473,7 +504,7 @@ const totalPrice = computed(() => {
                 type="number"
               />
               <div class="mt-2">
-                <UiLabel class="font-lazy mb-1 block text-lg font-medium">
+                <UiLabel class="font-lazy mb-1 block text-2xl font-medium">
                   How are you travelling?
                 </UiLabel>
                 <UiSelect v-model="optional.travelMethod">
@@ -493,7 +524,7 @@ const totalPrice = computed(() => {
               </div>
 
               <div class="mt-2">
-                <UiLabel class="font-lazy mb-1 block text-lg font-medium">
+                <UiLabel class="font-lazy mb-1 block text-2xl font-medium">
                   Community engagement (select any)
                 </UiLabel>
                 <div class="grid gap-2">
@@ -541,7 +572,7 @@ const totalPrice = computed(() => {
             <div class="mt-8">
               <label class="flex items-center gap-2">
                 <input v-model="termsAccepted" type="checkbox" />
-                <span>I accept the Terms & Conditions</span>
+                <span>I have read and fully accept the Code of Conduct</span>
               </label>
             </div>
 
@@ -564,13 +595,13 @@ const totalPrice = computed(() => {
               <!-- Badges -->
               <div class="flex items-center gap-2">
                 <!-- Pass Type Badge -->
-                <UiTooltip v-if="chosenTicket?.name">
+                <UiTooltip v-if="chosenTicket?.label">
                   <UiTooltipTrigger as-child>
                     <div
                       class="bg-muted text-muted-foreground flex size-8 items-center justify-center rounded-full"
                     >
                       <Icon
-                        v-if="chosenTicket?.name === 'Full'"
+                        v-if="chosenTicket?.label === 'Full pass'"
                         name="lucide:ticket"
                         class="size-5"
                       />
@@ -578,7 +609,7 @@ const totalPrice = computed(() => {
                     </div>
                   </UiTooltipTrigger>
                   <UiTooltipContent>
-                    <p>Pass: {{ chosenTicket?.name || chosenTicket }}</p>
+                    <span>Pass: {{ chosenTicket?.label || chosenTicket }}</span>
                   </UiTooltipContent>
                 </UiTooltip>
 
@@ -594,7 +625,7 @@ const totalPrice = computed(() => {
                     </div>
                   </UiTooltipTrigger>
                   <UiTooltipContent>
-                    <p>Donating £{{ payItForward.amount }}</p>
+                    <span>Donating £{{ payItForward.amount }}</span>
                   </UiTooltipContent>
                 </UiTooltip>
 
@@ -613,16 +644,30 @@ const totalPrice = computed(() => {
                 </UiTooltip> -->
 
                 <!-- Host Badge -->
-                <UiTooltip v-if="hosting === 'i-can-host'">
+                <UiTooltip>
                   <UiTooltipTrigger as-child>
                     <div
                       class="flex size-8 items-center justify-center rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
                     >
-                      <Icon name="lucide:home" class="size-5" />
+                      <Icon :name="hostingOption.icon" class="size-5" />
                     </div>
                   </UiTooltipTrigger>
                   <UiTooltipContent>
-                    <p>Super host!</p>
+                    <span>Super host!</span>
+                  </UiTooltipContent>
+                </UiTooltip>
+
+                <!-- Volunteer badge -->
+                <UiTooltip v-if="volunteering">
+                  <UiTooltipTrigger as-child>
+                    <div
+                      class="flex size-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400"
+                    >
+                      <Icon name="lucide:hand-heart" class="size-5" />
+                    </div>
+                  </UiTooltipTrigger>
+                  <UiTooltipContent>
+                    <span>Volunteer</span>
                   </UiTooltipContent>
                 </UiTooltip>
 
@@ -635,7 +680,7 @@ const totalPrice = computed(() => {
                     </div>
                   </UiTooltipTrigger>
                   <UiTooltipContent>
-                    <p>{{ musicianInstrument }}</p>
+                    <span>{{ musicianInstrument }}</span>
                   </UiTooltipContent>
                 </UiTooltip>
 
@@ -648,9 +693,9 @@ const totalPrice = computed(() => {
                     </div>
                   </UiTooltipTrigger>
                   <UiTooltipContent>
-                    <p>
+                    <span>
                       Merch: T-shirt ({{ merch.size || "no size selected" }})
-                    </p>
+                    </span>
                   </UiTooltipContent>
                 </UiTooltip>
               </div>
